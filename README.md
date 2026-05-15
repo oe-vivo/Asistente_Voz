@@ -227,7 +227,7 @@ Asistente_Voz/
 ├── requirements.txt
 ├── README.md
 ├── Asistente_Voz_IA.py      # Punto de entrada recomendado
-└── Base de hechos (animales).py   # Otro script del repositorio (independiente del asistente)
+└── Base_Hechos.py               # Sistema experto por rasgos (animales); independiente del asistente de voz
 ```
 
 Para **ampliar** el asistente suele bastar con:
