@@ -38,18 +38,3 @@ Este documento detalla exclusivamente las funciones añadidas al asistente de vo
   * `alexa envia sacar la basura en diez minutos`
   * `siri manda revisar el horno`
 * **Resultado:** El iPhone vibra y muestra una notificación flotante en la pantalla con el texto dictado.
-
----
-
-## 🚀 Cómo ejecutar la demostración rápida (Modo Texto)
-
-Para probar todo de forma ágil desde el teclado (ideal para el video o depuración sin ruido):
-
-1. Abre tu terminal en la raíz del proyecto.
-2. Activa el modo texto con la variable de entorno:
-   ```powershell
-   # En PowerShell:
-   $env:ASISTENTE_TEXTO = "1"
-   
-   # En CMD:
-   set ASISTENTE_TEXTO=1
