@@ -14,17 +14,17 @@ GRAMATICA_TEXTO = r"""
 S -> AV VP
 AV -> 'alexa' | 'siri' | 'google' | 'cortana'
 VP -> V | V OBJ | V DET N | V N
-DET -> 'el' | 'la' | 'los' | 'las' | 'al'
+DET -> 'el' | 'la' | 'los' | 'las' | 'al' | 'y'
 N -> 'perro' | 'gato' | 'luis' | 'miguel' | 'mana' | 'moderato' | 'jose'
-N -> 'notepad' | 'word' | 'edge' | 'documento'
-V -> 'canta' | 'escribe' | 'reproduce' | 'reproducir' | 'busca' | 'buscar' | 'abre' | 'abrir' | 'inicia'
+N -> 'notepad' | 'word' | 'edge' | 'documento' | 'equipo' | 'pc' | 'computadora' | 'hora' | 'fecha'
+V -> 'canta' | 'escribe' | 'reproduce' | 'reproducir' | 'busca' | 'buscar' | 'abre' | 'abrir' | 'inicia' |'anota' | 'recuerda' | 'dime' | 'da' | 'bloquea' | 'envia' | 'manda'| 'recuerdame' | 'mandame' | 'enviar'
 OBJ -> '__objeto__'
 """
 
 _gramatica = nltk.CFG.fromstring(GRAMATICA_TEXTO)
 _parser = nltk.ChartParser(_gramatica)
 # Verbos cuya cola libre se comprueba como un solo objeto (plantilla con __objeto__).
-VERBOS_CON_OBJETO_ABIERTO = frozenset({"reproduce", "reproducir", "busca", "buscar"})
+VERBOS_CON_OBJETO_ABIERTO = frozenset({"reproduce", "reproducir", "busca", "buscar","anota","recuerda","recuerdame","envia","manda","mandame"})
 
 
 def _indice_primer_verbo(tokens: list[str]) -> int | None:

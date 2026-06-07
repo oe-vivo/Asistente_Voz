@@ -14,6 +14,11 @@ from asistente_voz.acciones import (
     ejecutar_abrir_aplicacion,
     ejecutar_busqueda_google,
     ejecutar_reproducir_youtube,
+    #Nuevas funciones importadas...
+    ejecutar_bloquear_equipo,
+    ejecutar_decir_tiempo,
+    ejecutar_tomar_nota,
+    ejecutar_enviar_telefono
 )
 from asistente_voz.config import POST_WELCOME_SILENCE_S, VERBOS, WAKE_WORDS, env_si
 from asistente_voz.gramatica import comando_valido_según_gramatica
@@ -84,6 +89,19 @@ def procesar_comando(comando_normalizado: str, generador_voz: GeneradorVoz) -> N
             hablar("Di qué aplicación abrir: bloc de notas, Word o Edge.")
         else:
             ejecutar_abrir_aplicacion(alias, hablar)
+    #Funciones nuevas
+    elif verbo in ("anota","recuerda"):
+        ejecutar_tomar_nota(" ".join(cola), hablar)
+    elif verbo in ("dime","da"):
+        ejecutar_decir_tiempo(cola,hablar)
+    elif verbo in ("bloquea"):
+        if any(t in cola for t in ("equipo","pc","computadora")):
+            ejecutar_bloquear_equipo(hablar)
+        else:
+            hablar("¿Qué es lo que deseas bloquear?")
+    elif verbo in ("envia","manda","enviar"):
+        ejecutar_enviar_telefono(" ".join(cola),hablar)
+
     else:
         hablar("No tengo una acción definida para ese verbo todavía.")
 

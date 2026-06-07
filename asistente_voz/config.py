@@ -65,7 +65,7 @@ PRE_LISTEN_SILENCE_S: float = _env_float("ASISTENTE_SILENCIO_ANTES_ESCUCHAR_S", 
 # 1 - Microphone (Realtek High Definition Audio)
 # 2 - Microphone (Realtek High Definition Audio)
 # 3 - Microphone (Brio)
-MIC_DEVICE_INDEX_OVERRIDE: int | None = 3
+MIC_DEVICE_INDEX_OVERRIDE: int | None = 1
 
 _mic_raw = os.environ.get("ASISTENTE_MIC_INDEX", "").strip()
 if _mic_raw:
@@ -90,6 +90,15 @@ VERBOS: frozenset[str] = frozenset(
         "abre",
         "abrir",
         "inicia",
+        #Nuevos verbos implementados
+        "anota",
+        "dime",
+        "recuerda",
+        "da",
+        "bloquea",
+        "envia",
+        "manda",
+        "enviar"
     }
 )
 
@@ -140,3 +149,4 @@ ALIAS_ETIQUETA: dict[str, str] = {
     "documento": "Word",
     "edge": "Microsoft Edge",
 }
+NTFY_TOPIC = "mi_asistente_oevr"

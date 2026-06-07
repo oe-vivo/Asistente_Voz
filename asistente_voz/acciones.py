@@ -14,6 +14,12 @@ from urllib.parse import quote_plus
 
 import pywhatkit
 
+#Nuevas importaciones
+import ctypes
+from datetime import datetime
+import urllib.request
+from asistente_voz.config import NTFY_TOPIC
+
 from asistente_voz.config import ALIAS_ETIQUETA, resolver_ruta_aplicacion
 
 
@@ -39,6 +45,23 @@ def _buscar_google_hilo(q: str) -> None:
     except Exception as e:
         print(f"[Google] pywhatkit: {e}")
         webbrowser.open(_google_url(q))
+
+def _enviar_ntfy_hilo(mensaje: str) -> None:
+    url = f"https://ntfy.sh/{NTFY_TOPIC}"
+    datos = mensaje.encode('utf-8')
+    
+    req = urllib.request.Request(
+        url, 
+        data=datos, 
+        headers={"Title": "Asistente de Voz PC"}
+    )
+    
+    try:
+        with urllib.request.urlopen(req) as response:
+            if response.status == 200:
+                print(f"[Notificación] Enviada con éxito al Celular.")
+    except Exception as e:
+        print(f"[Notificación] Error al conectar con ntfy: {e}")
 
 
 def ejecutar_reproducir_youtube(consulta: str, hablar) -> None:
@@ -92,3 +115,72 @@ def detectar_alias_app_en_tokens(tokens: list[str]) -> str | None:
         if t in apps:
             found = t
     return found
+
+def ejecutar_tomar_nota(texto_nota: str, hablar) -> None:
+    nota = texto_nota.strip()
+    if not nota:
+        hablar("¿Que quieres que anote?")
+        return
+    ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    linea_nota = f"[{ahora}] {nota}"
+
+    try:
+        with open("notas.txt","a", encoding="utf-8") as f:
+            f.write("\n"+linea_nota)
+            msg = f"Anotado en tu bloc de notas: {nota}"
+            print(f"[Notas] Guardado: {linea_nota.strip()}")
+            hablar(msg)
+    except Exception as e:
+        print(f"[Notas] Error al escribir archivo: {e}")
+        hablar("Lo siento, no pude guardar la nota en el archivo")
+
+def ejecutar_decir_tiempo(tokens_cola: list[str], hablar) -> None:
+    frase_cola = " ".join(tokens_cola).lower()
+    ahora = datetime.now()
+
+    pedir_fecha = "fecha" in frase_cola
+    pedir_hora = "hora" in frase_cola
+
+    if not pedir_fecha and not pedir_hora:
+        pedir_hora = True
+        pedir_fecha= True
+
+    mensajes= []
+    if pedir_fecha:
+        meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]
+        fecha_str = f"{ahora.day} de {meses[ahora.month-1]} del {ahora.year}"
+        mensajes.append(f"Hoy es {fecha_str}")
+    if pedir_hora:
+        hora_str = ahora.strftime("%I:%M %p")
+        mensajes.append(f"Son las {hora_str}")
+    
+    msg = ", y ".join(mensajes)
+    print(f"[Tiempo] {msg}")
+    hablar(msg)
+
+def ejecutar_bloquear_equipo(hablar) -> None:
+    msg = "Bloqueando computadora."
+    print(f"[Sistema] {msg}")
+    hablar(msg)
+    time.sleep(0.5)
+    
+    ctypes.windll.user32.LockWorkStation()
+
+def ejecutar_enviar_telefono(texto_notificacion: str, hablar) -> None:
+    msg_limpio = texto_notificacion.strip()
+    if not msg_limpio:
+        hablar("¿Qué mensaje quieres que envíe a tu teléfono?")
+        return
+        
+    msg_confirmacion = f"Enviando mensaje al teléfono: {msg_limpio}."
+    print(msg_confirmacion)
+    hablar(msg_confirmacion)
+    
+# Lo lanzamos en un hilo para que la red no congele la voz del asistente
+    threading.Thread(
+        target=_enviar_ntfy_hilo, 
+        args=(msg_limpio,), 
+        daemon=True, 
+        name="ntfy"
+    ).start()
+
